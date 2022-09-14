@@ -35,9 +35,9 @@ declare global {
     weight: string
     status : 0 | 1
   }
-  export interface orderInterface {
+  export interface OrderInterface {
     readonly id: number | string
-    name : string
+    userName : string
 
     discount : number
 

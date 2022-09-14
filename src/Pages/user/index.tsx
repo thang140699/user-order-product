@@ -1,38 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { fake_class, User } from 'src/models/user'
-import { Table, TableProps } from 'antd'
+import { Button, Table, TableProps } from 'antd'
 import Page from '@components/Page'
 import { UserApi } from '@apis/user'
+import { useUserList } from '@hooks/user'
+import ModalForm, { ModalFormMethod } from './components/ModalForm'
 
 type UserPageProps = {}
 
 const UserPage: React.FC<UserPageProps> = () => {
-  const [loading, setLoading] = useState<boolean>(true)
-  const [error, setError] = useState<boolean | string>(false)
-  const [data, setData] = useState<User[]>([])
-  const [page, setPage] = useState<Page>({
-    current: 1,
-    max: 1,
-  })
+  const { loading, error, data, page, fetch } = useUserList()
 
-  useEffect(() => {
-    UserApi.list().then(r => {
-      setData(r.data)
-      setError(false)
-      if (r.page) setPage(r.page)
-      setLoading(false)
-    })
-  }, [])
-  //     setTimeout(() => {
-  //       setData(fake_class)
-  //       setError(false)
-  //       setPage({
-  //         current: 1,
-  //         max: 10,
-  //       })
-  //       setLoading(false)
-  //     }, 10000)
-  //   }, [])
   const columns = useRef<TableProps<User>['columns']>([
     {
       key: 'id',
@@ -69,10 +47,25 @@ const UserPage: React.FC<UserPageProps> = () => {
       },
     },
   ])
-
+  const modal = useRef<ModalFormMethod>(null)
+  const onCreate = () => {
+    modal.current?.setVisible(true)
+  }
+  const onFinished = () => {
+    fetch()
+  }
   return (
     <Page inner>
-      <Table dataSource={fake_class} columns={columns.current} />
+      <div className="view-create">
+        <Button onClick={onCreate}>Create</Button>
+      </div>
+      <Table
+        rowKey={item => item.id}
+        loading={loading}
+        dataSource={data}
+        columns={columns.current}
+      />
+      <ModalForm ref={modal} onFinished={onFinished} />
     </Page>
   )
 }

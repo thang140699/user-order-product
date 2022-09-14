@@ -1,27 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { fake_product, Product } from '@models/product'
-import { Table, TableProps } from 'antd'
+import { Button, Modal, Table, TableProps } from 'antd'
 import Page from '@components/Page'
 import { ProductApi } from '@apis/product'
+import ModalForm, { ModalFormMethod } from '@Pages/user/components/ModalForm'
+import { useProdictList } from '@hooks/product'
 
 type ProductPageProps = {}
 
 const ProductPage: React.FC<ProductPageProps> = () => {
-  const [loading, setLoading] = useState<boolean>(true)
-  const [error, setError] = useState<boolean | string>(false)
-  const [data, setData] = useState<Product[]>([])
-  const [page, setPage] = useState<Page>({
-    current: 1,
-    max: 1,
-  })
-  useEffect(() => {
-    ProductApi.Listproduct().then(r => {
-      setData(r.data)
-      setError(false)
-      if (r.page) setPage(r.page)
-      setLoading(false)
-    })
-  }, [])
+  const { loading, error, data, page, fetchProduct } = useProdictList()
 
   const colums = useRef<TableProps<Product>['columns']>([
     {
@@ -59,9 +47,23 @@ const ProductPage: React.FC<ProductPageProps> = () => {
       },
     },
   ])
+  const modal = useRef<ModalFormMethod>(null)
+  const onCreate = () => {
+    modal.current?.setVisible(false)
+  }
+  const onFinished = () => {}
   return (
     <Page inner>
-      <Table dataSource={fake_product} columns={colums.current} />
+      <div className="viewCreate">
+        <Button onClick={onCreate}>Create</Button>
+      </div>
+      <Table
+        rowKey={item => item.id}
+        loading={loading}
+        dataSource={data}
+        columns={colums.current}
+      />
+      <ModalForm ref={modal} onFinished={onFinished} />
     </Page>
   )
 }

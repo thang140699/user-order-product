@@ -8,7 +8,7 @@ export const orderId: () => number = () => {
      return oid
 }
 
-export class Order implements orderInterface {
+export class Order implements OrderInterface {
      readonly id: number | string
 
      userName : string

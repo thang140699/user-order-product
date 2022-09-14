@@ -5,7 +5,7 @@ import './App.css'
 import UserPage from 'src/Pages/user/index'
 import ProductPage from '@product'
 import { Layout } from 'antd'
-import OrderPage from 'src/Pages/order/index'
+// import OrderPage from 'src/Pages/order/index'
 
 type AppProps = {}
 
